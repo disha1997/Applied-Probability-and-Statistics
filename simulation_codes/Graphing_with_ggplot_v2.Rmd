@@ -1,0 +1,645 @@
+---
+title: "Graphing with ggplot"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+# Load the mpg dataset
+data('mpg')
+mpgData = mpg
+
+# Print the first five rows (or samples) in the data frame
+head(mpgData, 5)
+str(mpgData)
+```
+```{r}
+# Initiate the ggplot() function binding to the car data frame
+ggplot(data = mpgData)
+
+# Create a plot object
+p1 = ggplot(data = mpgData)
+
+# Use the aes() function to specify the aesthetic mapping, that is, which variables
+# should be plotted
+p1 = ggplot(data = mpgData, aes(x = disp, y = hwy))
+
+# Use the geom_ type functions to add geometric elements
+p1 = ggplot(data = mpgData, aes(x = displ, y = hwy)) +
+  geom_point()
+
+# Add labels and title
+p1 = p1 + labs(x = 'Displacement (litres)', y = 'Mileage (MPG)', title = 'Mileage vs. Displacement')
+p1
+```
+
+
+```{r}
+# Map aesthetics to variables
+
+# Map the color aesthetic to the class variable
+p2 = ggplot(data = mpgData) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+p2
+```
+
+```{r}
+# Map aesthetics to variables
+
+# Map the size (or alpha or shape) aesthetic to the class variable
+p3 = ggplot(data = mpgData) +
+  geom_point(aes(x = displ, y = hwy, color = class, shape = drv)) + labs(x = 'Displacement (litres)', y = 'Mileage (MPG)', title = 'Mileage vs. Displacement')
+p3
+```
+
+```{r}
+# Set aesthetic manually
+
+# Mark the points blue in color, square in shape, and fixed size
+p4 = ggplot(data = mpgData) +
+  geom_point(aes(x = displ, y = hwy), color = 'red', size = 1) + labs(x = 'Displacement (litres)', y = 'Mileage (MPG)', title = 'Mileage vs. Displacement')
+p4
+```
+
+```{r}
+# How do we relate a continuous and a categorical feature?
+p5 = ggplot(data = mpgData) + 
+  geom_boxplot(aes(x = class, y = hwy)) + labs(x = 'Vehicle Class', y = 'Mileage (MPG)', title = 'Mileage vs. Vehicle Class')
+p5
+```
+
+
+```{r}
+# Add additional variables using facets
+
+# Plot mileage w.r.t. each class individually
+ggplot(data = mpgData) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(, nrow = 2)
+```
+
+```{r}
+# Plot mileage w.r.t drive train and number of cylinders
+ggplot(data = mpgData) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_grid()
+```
+
+```{r}
+# A quick exercise on facet plotting with filtering of samples
+# Investigate the number of levels in the cyl feature
+factor()
+
+# How many cars of each cyl type are there?
+mpgData %>% 
+
+# Filter samples with 3 and 5 cylinder cars (which are very rare)
+# mpgData = mpgData %>% filter(!(? %in% c(?, ?)))
+# 
+# head(mpgData, 5)
+# 
+# # Map the color aesthetic to the cyl variable
+# p5 = ggplot(data = mpgData) +
+#   geom_point(mapping = aes(x = displ, y = hwy))
+# p5
+```
+
+
+DATE = 28 AUGUST 2023
+
+```{r}
+foodData = read.csv('Data/food-texture.csv'
+                    , header=TRUE, row.names = 1)
+head(foodData,n=5)
+str(foodData)
+```
+
+
+```{r}
+#add another column to data frame called Taste
+#foodData['Taste'] = sample(c('poor','fair','good','very good'), replace=TRUE, nrow(foodData), p=c(0.25,0.25,0.25,0.25))
+
+#head(foodData,n=5)
+```
+
+
+```{r}
+nrow(foodData)
+```
+
+
+```{r}
+ncol(foodData)
+```
+
+
+```{r}
+#write.csv(foodData, 'Data/food-texture.csv')
+```
+
+
+```{r}
+continuous_cols = c('oil','Density','Fracture','Hardness')
+categorical_cols = c('Crispy','Taste')
+```
+
+
+```{r}
+foodData$Oil 
+
+```
+
+```{r}
+foodData[['Oil']]
+
+```
+
+
+```{r}
+food[, 'Oil']
+```
+
+below returns dataframe, whereas the above 3 ways of accessing returns vector of values
+```{r}
+foodData['Oil']
+```
+
+another way of accessing only categorical columns, then we use lapply function to apply function to specific columns of dataframe.
+```{r}
+foodData[categorical_cols]
+```
+
+hERE we convert categorical columns to factor type using lapply(here l-stands for list)  function, here the function application will happen column by column, here dataframe is not changed, the change is temporary
+
+```{r}
+lapply(foodData[categorical_cols], factor)
+```
+
+```{r}
+foodData[categorical_cols] = lapply(foodData[categorical_cols], factor)
+str(foodData)
+```
+
+In reality, w.r.t scaling has to continuous features important to avoid influence of units of features
+
+to understand relationship b/w 2 continuous features we use scatter plots - geom_plot() used for scatter plot
+
+to understand relationship b/w a continuous feature and categorical feature - we use box plots
+
+to understand just 1 continuous feature - histogram
+
+to understand just 1 categorical feature - we use bar plot
+
+```{r}
+library(ggplot2)
+```
+
+
+```{r}
+p = ggplot(data = foodData) +  
+  geom_point(aes(x = Oil, y = Density))
+p
+```
+
+
+```{r}
+p = ggplot(data = foodData) +  
+  geom_point(aes(x = Oil, y = Density, color = Crispy))
+p
+```
+
+
+```{r}
+p = ggplot(data = foodData) +  
+  geom_boxplot(aes(x = Crispy, y = Density))
+p
+```
+
+
+```{r}
+foodData[foodData['Crispy'] == 8, 'Density']
+
+```
+
+
+```{r}
+foodData[foodData['Crispy'] == 8,]$Density
+```
+
+Density of all those pastries with crispy value equal to 10
+
+```{r}
+foodData[foodData['Crispy'] == 10, 'Density']
+```
+
+
+
+```{r}
+density10 = foodData[foodData['Crispy'] == 10,]$Density
+density10
+```
+
+
+```{r}
+mean(density10)
+```
+
+below tells how much deviation each value has from average, mean centered density values
+
+```{r}
+density10 - mean(density10)
+```
+
+here we are broadcasting (subtraction), and then squaring - all values will be positives for this purpose we sqaure them
+```{r}
+(density10 - mean(density10))^2
+
+```
+
+mean of squared deviations from average - this is called variance, the average amount by which it deviates from average.
+```{r}
+mean((density10 - mean(density10))^2)
+```
+
+below is called standard deviation - single value tells us in general how much density values varies from average
+
+```{r}
+sqrt(mean((density10 - mean(density10))^2))
+```
+
+use the var function to calculate variance of continous column
+```{r}
+var(density10)
+```
+
+similarly, use sd for std dev
+```{r}
+sd(density10)
+```
+
+
+so far we saw - 
+vector
+mean centered vector
+squared mean-centered vector
+average of the squared mean-centered vector = variance
+standard deviation - understand why n-1 is used for division in std dev
+mean of a vector
+percentile 
+90th percentile means - approx 90% of students have height less than or equal to this value
+median of a vector - 50th percentile
+
+```{r}
+median(density10)
+
+```
+
+
+```{r}
+density10 <= median(density10)
+
+```
+
+what fraction of density values are less than or equal to median
+
+```{r}
+mean(density10 <= median(density10))
+```
+
+
+```{r}
+mean(density10 <= median(density10)) * 100
+```
+
+median splits population into two half
+```{r}
+median(density10)
+```
+
+mean is simply average value, but if they both mean and median is same
+
+```{r}
+mean(density10)
+```
+
+
+to calculate 25th percentile, it gives 25% and 25th percentile value
+
+```{r}
+quantile(density10, 0.25) 
+
+```
+
+5oth percentile is median
+```{r}
+quantile(density10, 0.5) 
+```
+
+the probability for next random value to be less than 2980 is 75%
+```{r}
+quantile(density10, 0.75)
+```
+
+
+IQR - Inter quantile range = difference b/w 75th and 25th percentile
+box_plot is IQR, below line - 25th percentile, 75th percentile is last line
+if IQR is big - it means distribution is wide, more deviation from median
+```{r}
+quantile(density10, 0.75) - quantile(density10, 0.25)
+```
+
+
+```{r}
+density13 = foodData[foodData['Crispy'] == 13,]$Density
+
+```
+
+
+```{r}
+mean(density13)
+```
+
+
+```{r}
+median(density13)
+```
+
+
+```{r}
+sd(density13)
+```
+
+
+```{r}
+quantile(density13, 0.25)
+```
+
+
+```{r}
+quantile(density13, 0.75)
+```
+
+
+```{r}
+density13
+```
+
+
+when mean and median is very different like above case, then distribution is not symmetric, it is skewed. can see this using IQR
+
+
+```{r}
+quantile(density13, 0.75) - quantile(density13, 0.25)
+```
+
+this histogram is skewed little, it is negatively skewed
+
+```{r}
+p = ggplot(data= foodData) + geom_histogram(aes(x= Density), binwidth = 100, color='blue')
+p
+```
+
+
+
+```{r}
+p = ggplot(data= foodData[foodData$Crispy == 13, ]) + geom_histogram(aes(x= Density), binwidth = 100, color='blue')
+p
+```
+
+
+```{r}
+p = ggplot(data= foodData) + geom_bar(aes(x= Density), binwidth = 100, color='blue')
+p
+```
+
+
+Date - September 6, 2023
+
+```{r}
+library(ggplot2)
+library(dbplyr)
+```
+
+
+```{r}
+foodData = read.csv('Data/food-texture.csv', header=TRUE, row.names = 1)
+head(foodData,n=5)
+str(foodData)
+
+```
+
+
+```{r}
+continuous_cols = c('oil','Density','Fracture','Hardness')
+categorical_cols = c('Crispy','Taste')
+```
+
+
+below returns dataframe, whereas the above 3 ways of accessing returns vector of values
+```{r}
+foodData['Oil']
+```
+
+another way of accessing only categorical columns, then we use lapply function to apply function to specific columns of dataframe.
+```{r}
+foodData[categorical_cols]
+```
+
+hERE we convert categorical columns to factor type using lapply(here l-stands for list)  function, here the function application will happen column by column, here dataframe is not changed, the change is temporary
+
+```{r}
+lapply(foodData[categorical_cols], factor)
+```
+
+```{r}
+foodData[categorical_cols] = lapply(foodData[categorical_cols], factor)
+str(foodData)
+```
+
+
+
+```{r}
+foodData[['Density']]
+```
+
+```{r}
+density = foodData$Density
+#converting density to pounds and grams
+density_lb = 2.2*density
+density_gm = 1000*density
+#see the difference in values in above two variables
+```
+
+
+there is broadcasting happening here during subtraction
++ve values means how much above average it is
+-ve means how much below average
+```{r}
+#below gives mean centered density value - gives us an idea of data is rather simply seeing entire list as it is
+density_MC = density - mean(density)
+```
+
+
+```{r}
+#average density is near 0 now
+mean(density_MC)
+```
+
+base r package can be used for quick plots in console for checking and ggplot accepts only dataframe as input.
+ggplot - is best for many reasons
+```{r}
+plot(foodData$Density, foodData$Oil)
+```
+
+can see most values near center, some above and below
+```{r}
+#this is called component plot - can be used to visualize continuos values
+plot(foodData$Density)
+```
+
+
+this second plot is more informative than above - as we can see how points are near 0, above 0 and below 0, gives more idea about the distribution - gaussian-like or skewness
+```{r}
+plot(density_MC)
+```
+
+
+gives numerical matrix below with 2 columns and the we convert to dataframe
+```{r}
+#stands for column bind - binds 2 vectors side by side - can do it on all sorts of objects
+cbind(density, density_MC)
+str(cbind(density, density_MC))
+```
+
+data frame created for ggplot
+```{r}
+dfDensity = data.frame(cbind(density, density_MC))
+dfDensity
+```
+
+
+we use nrow since number of rows should not be hard coded with numbers
+here color is not part of data frame hence placed outside
+```{r}
+p = ggplot(data = dfDensity) + geom_point(aes(x=c(1:nrow(foodData)), y=density), color='blue')
+p
+```
+
+below is more professional way of plotting 
+```{r}
+p = ggplot(data = dfDensity) + geom_line(aes(x=c(1:nrow(foodData)), y=density), color='blue') + labs(x = 'Sample Number', y = 'Density(Kg/m^3)', title='Component plot of density') + geom_line(aes(x=c(1:nrow(foodData)), y=mean(density)), color='red')
+p
+```
+
+Both component plots - have same structure
+```{r}
+p = ggplot(data = dfDensity) + geom_point(aes(x=c(1:nrow(foodData)), y=density), color='blue') + labs(x = 'Sample Number', y = 'Density(Kg/m^3)', title='Component plot of density') + geom_line(aes(x=c(1:nrow(foodData)), y=mean(density)), color='red')
+p
+```
+
+```{r}
+p = ggplot(data = dfDensity) + geom_point(aes(x=c(1:nrow(foodData)), y=density_MC), color='blue') + labs(x = 'Sample Number', y = 'Density(Kg/m^3)', title='Component plot of density') + geom_line(aes(x=c(1:nrow(foodData)), y=mean(density_MC)), color='red')
+p
+```
+
+A plot like below helps us identify outliers, assuming distribution is symmetric
+
+```{r}
+p = ggplot(data = dfDensity) + geom_point(aes(x=c(1:nrow(foodData)), y=density), color='blue') + labs(x = 'Sample Number', y = 'Density(Kg/m^3)', title='Component plot of density') + geom_line(aes(x=c(1:nrow(foodData)), y=mean(density)), color='red') + geom_line(aes(x=c(1:nrow(foodData)), y=mean(density) + sd(density)), color='red', linetype='dashed') + geom_line(aes(x=c(1:nrow(foodData)), y=mean(density) - sd(density)), color='red', linetype='dashed') 
+p
+```
+
+
+```{r}
+hist(density)
+```
+
+
+to find % of points around mean within 1 standard deviation, this information helps us understand about symmetry of the distribution
+```{r}
+mean(abs(density - mean(density)) <= sd(density))
+```
+
+
+average amount by which the density values deviate from the average of density values in a squared sense
+units will be sq units only
+variance - average squared deviation
+
+```{r}
+mean((density - mean(density))**2)
+```
+
+below is std dev
+we deal with mean centered density vectors and not direct density vectors as with the former we get positive and negative values that are useful
+```{r}
+sqrt(mean((density - mean(density))**2))
+```
+
+
+why are we calling z? z transform (z contains z scores corresponding to density)
+observe how z and z_lb is exactly same ---> standardization
+3 benefits-
+1)independent of units
+2)positive and negative values
+3)z-scores: also helpful in identifying outliers
+outliers - anything that deviates too much from average (this term "too much" is relative and depends on specific case)
+```{r}
+z = (density - mean(density)) / sd(density)
+z
+```
+
+```{r}
+z_lb = (density_lb - mean(density_lb)) / sd(density_lb)
+z_lb
+```
+
+standard_scaling is simply called scaling because R is oldest language they just called it that
+
+```{r}
+scale(density)
+scale(density_lb)
+scale(density_gm)
+```
+
+
+```{r}
+continuous_cols = c('Oil','Density','Fracture','Hardness')
+categorical_cols = c('Crispy','Taste')
+```
+
+
+```{r}
+foodData[continuous_cols] = lapply(foodData[continuous_cols], scale)
+foodData[continuous_cols]
+```
+why are these two values stored internally?
+
+attr(,"scaled:center")  --> mean
+[1] 2857600
+attr(,"scaled:scale")   --> std dev
+[1] 124500
+
+
+sc = standardScaler()
+sc.fit() -- computes mean and sd of each column
+sc.fit_transform() --  computes both mean, sd of each col and converts cols to their z values
+sc.transform() -- converts to z values using above two stored attribute values
+
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+

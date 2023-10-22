@@ -1,0 +1,62 @@
+NAME: SAI DISHA .D
+ROLL NO: 231057026
+ME in AIML @ MSIS,MAHE.
+
+A small community organization consists of 20 families of which 4 have one child, 8 have two children, 5 have 3 children, 2 have four children, and 1 has five children. If one of those families are chosen at random, what is the probability that it has 3 children?
+
+```{r}
+s1 = c(1,2,3,4,5)
+p = c(0.20, 0.40, .25, .10, .05)
+families = function(){
+  family_picked = 0
+  for (j in c(1:20)){
+    family_picked = sample(s, replace = FALSE, prob = p)
+  }
+  return(family_picked)
+}
+
+nSimulations = 10000
+simulatedData = replicate(nSimulations, families())
+
+checkEvent = function(data){
+  return(data==3)
+}
+
+mean(apply(simulatedData,2,checkEvent))*100
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+```{r}
+```
+
+
+```{r}
+```
+
