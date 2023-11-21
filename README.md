@@ -1,5 +1,5 @@
 # Applied-Probability-and-Statistics
-Applied Probability and Statistics - practice problems and codes
+Applied Probability and Statistics - practice problems and codes, classwork & assignments
 
-As part of Manipal School of Information Sciences,MAHE [Masters in Artificial Intelligence], I have done and uploaded all the assignments here up-to-date
+I have uploaded all of my work for the Applied Probability & Statistics course at Manipal School of Information Sciences, MAHE [Masters in Artificial Intelligence & Machine Learning].
 
