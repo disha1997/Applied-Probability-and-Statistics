@@ -1,0 +1,214 @@
+---
+title: "RandomVariables"
+output: html_document
+date: "2023-10-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+
+```{r}
+n = 4
+p = 4/10
+j = 2
+dbinom(j,n,p)  # P(X=j) where X~Bin(n,p) 
+pbinom(j,n,p)  # P(X=j) where X~Bin(n,p) 
+```
+
+```{r}
+#what is the prob we get at most 2 white balls  
+# P(X<=2)
+0:2 #vector 0 1 2
+c(0:2) #vector 0 1 2
+seq(0,2) #vector 0 1 2
+dbinom(0:2,n,p) #point prob 
+sum(dbinom(0:2,n,p))
+
+#CDF - Cumulative distribution function
+#pbinom does summation by itself
+pbinom(j,n,p)    #Accumulative prob 
+
+#what is the prob we get at least 2 white balls
+# P(X>=2) = 1 - P(X<=2) = 1 - P(X<=1)
+1 - pbinom(1,n,p)   #P(X>=2)
+
+```
+
+
+```{r}
+#Simulation Way
+nsimulation = 1e5
+rbinom(nsimulation,n,p)   #simulating picking the white balls
+
+# X=2
+simulatedData = rbinom(nsimulation,n,p) #simulating binomial random variable
+mean(simulatedData == 2)
+
+#what is the prob we get at most 2 white balls  
+simulatedData = rbinom(nsimulation,n,p) #simulating binomial random variable
+mean(simulatedData <= 2)
+
+#what is the prob we get at least 2 white balls
+simulatedData = rbinom(nsimulation,n,p) #simulating binomial random variable
+mean(simulatedData >= 2)
+
+```
+
+
+```{r}
+#Probability Mass Funtion(PMF) of X~Bin(n=4,p=0.4)
+nsimulation = 10000
+n = 4
+p = 0.4
+simulatedData = rbinom(nsimulation,n,p) 
+#mean(simulatedData == 2)
+dfBalls = as.data.frame(table(simulatedData))
+colnames(dfBalls) = c('Values','P')
+dfBalls['Frequency'] = dfBalls['P'] / nsimulation
+p = ggplot(data = dfBalls, aes(x = Values , y = Frequency))+
+  geom_col( width = 0.2, fill = 'steelblue')+
+  ggtitle('Probability Mass Funtion(PMF) of X~Bin(n=4,p=0.4)')+
+  theme_minimal()
+  
+p
+```
+
+
+```{r}
+nsimulation = 10000
+n = 4
+p = 0.4  # Do same for 0.1,0.4,0.5,0.7,1.0
+simulatedData = rbinom(nsimulation,n,p) 
+#mean(simulatedData == 2)
+dfBalls = as.data.frame(table(simulatedData))
+colnames(dfBalls) = c('Values','P')
+dfBalls['Frequency'] = dfBalls['P'] / nsimulation
+p = ggplot(data = dfBalls, aes(x = Values , y = Frequency))+
+  geom_col( width = 0.2, fill = 'steelblue')+
+  ggtitle('Probability Mass Funtion(PMF) of X~Bin(n=4,p=0.9)')+
+  theme_minimal()
+p
+```
+
+
+```{r}
+n = 4
+p = 0.4  # Do same for 0.5, 0.9
+nsimulation = 1e5
+simulatedData = rbinom(nsimulation,n,p)
+mean(simulatedData) #Long run average of simulated values of the random variable (placing fulcrum) - Expected Value
+simulatedData - mean(simulatedData) #Mean Centered Simulated Value - Deviation from the avg, +ve above avg, -ve above avg
+(simulatedData - mean(simulatedData))^2  #Squared Mean Centered Simulated Values - Squared Deviation from the avg
+mean((simulatedData - mean(simulatedData))^2) # Average of Squared Mean Centered Simulated Values - Variance
+sqrt(mean((simulatedData - mean(simulatedData))^2))  #Standard Deviation
+# Note  - Realized value of a variable is a vector
+print("------------")
+mean(simulatedData)
+var(simulatedData)
+sd(simulatedData)
+```
+
+
+
+```{r}
+j = c(0:n)
+p = dbinom(j,n,p) #prob pf each 
+sum(j * p) #Hadamard Product  - Expected Value
+j %*% p #Dot Product
+```
+
+
+```{r}
+# X = Heart rate of a random paient, which is a random variable. We will assume that the heart rates are symmetrically distri around 74BPM
+
+nsimulation = 100
+simulatedData = rnorm(nsimulation, mean = 74, sd = 6)
+print(simulatedData)
+
+#Expected value of HR (BPM)
+
+mean(simulatedData)
+
+# Variance of HR (BPM^2)
+mean((simulatedData - mean(simulatedData))^2) 
+
+#STD of HR (BPM)
+sqrt(mean((simulatedData - mean(simulatedData))^2))
+
+```
+
+
+
+```{r}
+#scatter plot - x=1 to 100, y=HR
+dfPatient = as.data.frame(simulatedData)
+colnames(dfPatient) = c('HR')
+head(dfPatient)
+p = ggplot(data = dfPatient) +
+  geom_point(aes (x= 1:nrow(dfPatient), y= HR ), color = 'blue')+
+  labs( x = 'Patient', y = 'HR(BPM)' , title = 'Component plot for Heart Rate') + 
+  geom_hline(yintercept = mean(simulatedData),color= 'red')+
+  geom_hline(yintercept = (mean(simulatedData) + sqrt(mean((simulatedData - mean(simulatedData))^2))),color= 'green')+
+  geom_hline(yintercept = (mean(simulatedData) - sqrt(mean((simulatedData - mean(simulatedData))^2))),color= 'green')
+p
+```
+```{r}
+#Inbuilt Functions
+mean(simulatedData) #Expected Value
+var(simulatedData) #Variance
+sd(simulatedData) #STD
+
+
+# How far are each HR are from the mean, check the deviation falls between the green lines
+# For what fraction of the sample does the HR falls between the one Standard deviation 
+mean(abs(simulatedData-mean(simulatedData))<=sd(simulatedData))*100 
+```
+
+
+
+
+
+
+
+
+```{r}
+#CDF
+nsimulation = 100
+n = 4
+p = 4/10
+simulatedData = 1 - pbinom(nsimulation,n,p) 
+#mean(simulatedData == 2)
+dfBalls = as.data.frame(table(simulatedData))
+colnames(dfBalls) = c('X','P')
+dfBalls['Probability'] = dfBalls['P'] / nsimulation
+p = ggplot(data = dfBalls)+
+  geom_col(aes(x = X , y = Probability , fill = 'blue'))
+p
+```
+
+```{r}
+#STOPLIGHT PROBLEM
+n = 8
+p = 0.31
+j = 5
+dbinom(j,n,p)
+
+# X=2
+nsimulation = 100
+simulatedData = rbinom(nsimulation,n,p) #simulating binomial random variable
+mean(simulatedData == 5)
+
+```
+
+
+
+
+
