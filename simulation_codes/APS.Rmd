@@ -1,0 +1,151 @@
+**problem 1**
+
+```{r}
+# Given probabilities
+P_person_guilty <- 0.75
+P_person_not_guilty <- 1 - P_person_guilty
+
+# Define conditional probabilities
+P_convict_given_person_guilty <- 0.8  
+P_convict_given_person_not_guilty <- 0.1 
+
+P_acquit_given_person_guilty <- 0.2  
+P_acquit_given_person_not_guilty <- 0.9 
+
+# Assuming at least 9 votes are needed to convict, and at least 3 votes are needed to acquit
+# Define binomial probabilities
+binomial_convict <- dbinom(9:12, size = 12, prob = P_convict_given_person_guilty)
+binomial_acquit <- dbinom(0:3, size = 12, prob = P_acquit_given_person_not_guilty)
+```
+
+```{r}
+# Calculate the probability of a correct decision using the law of total probability
+P_correct_decision <- sum(binomial_convict) * P_person_guilty + sum(binomial_acquit) * P_person_not_guilty
+```
+
+```{r}
+# Print the results
+cat(sprintf("Probability of convicting given person is guilty: %.4f\n", P_convict_given_person_guilty))
+```
+
+```{r}
+cat(sprintf("Probability of convicting given person is not guilty: %.4f\n", P_convict_given_person_not_guilty))
+```
+
+```{r}
+cat(sprintf("Probability of acquitting given person is guilty: %.4f\n", P_acquit_given_person_guilty))
+```
+
+```{r}
+cat(sprintf("Probability of acquitting given person is not guilty: %.4f\n", P_acquit_given_person_not_guilty))
+```
+
+```{r}
+cat(sprintf("Probability of a correct decision is \n P(Court decides to convict | Person not guilty) and
+P(Court decides to convict | Person guilty) \n: %.4f\n", P_correct_decision))
+```
+```{r}
+# Given probabilities
+P_person_guilty <- 0.75
+P_person_not_guilty <- 1 - P_person_guilty
+
+# Define conditional probabilities
+P_convict_given_person_guilty <- 0.8  
+P_convict_given_person_not_guilty <- 0.1 
+
+P_acquit_given_person_guilty <- 0.2  
+P_acquit_given_person_not_guilty <- 0.9 
+
+# Assuming at least 9 votes are needed to convict, and at least 3 votes are needed to acquit
+# Define binomial probabilities
+votes_convict <- 9:12
+votes_acquit <- 0:3
+
+# Number of scenarios
+num_scenarios <- length(votes_convict)
+
+# Initialize an array to store results
+results <- numeric(num_scenarios)
+
+# For loop to calculate the probability of a correct decision for each scenario
+for (i in 1:num_scenarios) {
+  binomial_convict <- dbinom(votes_convict[i], size = 12, prob = P_convict_given_person_guilty)
+  binomial_acquit <- dbinom(votes_acquit[i], size = 12, prob = P_acquit_given_person_not_guilty)
+  
+  # Calculate the probability of a correct decision using the law of total probability
+  P_correct_decision <- binomial_convict * P_person_guilty + binomial_acquit * P_person_not_guilty
+  
+  # Store the result in the array
+  results[i] <- P_correct_decision
+}
+
+# Print the results
+for (i in 1:num_scenarios) {
+  cat(sprintf("Probability of a correct decision for scenario %d: %.4f\n", i, results[i]))
+}
+
+# Calculate the overall probability by averaging the results
+overall_probability <- mean(results)
+cat(sprintf("\nOverall probability of a correct decision: %.4f\n", overall_probability))
+
+```
+
+
+\*\* the chosen conditional probabilities are:
+
+P(Court decides to convict \| Person not guilty): P_convict_given_person_not_guilty P(Court decides to convict \| Person guilty): P_convict_given_person_guilty \*\*
+
+**problem 2**
+
+```{r}
+# Define parameters
+avg_customers_per_day <- 30
+age_group_probs <- c(0.20, 0.35, 0.45)
+avg_items_per_age_group <- c(10, 20, 5)
+
+# Number of simulations
+n_simulations <- 10000
+
+# Store results
+total_items_sold <- numeric(n_simulations)
+
+# Run simulations
+for (i in 1:n_simulations) {
+  # Number of customers for the day
+  n_customers <- rpois(1, avg_customers_per_day)
+  
+  # Age group of each customer
+  age_groups <- sample(0:2, n_customers, replace = TRUE, prob = age_group_probs)
+  
+  # Number of items bought by each customer
+  items_bought <- rpois(n_customers, avg_items_per_age_group[age_groups + 1])
+  
+  # Total items sold for the day
+  total_items_sold[i] <- sum(items_bought)
+}
+```
+
+```{r}
+# Calculate probability
+prob_over_350 <- mean(total_items_sold > 350)
+
+# Print probability
+print(prob_over_350)
+```
+
+```{r}
+# Plot histogram
+library(ggplot2)
+
+# Create a data frame
+df <- data.frame(total_items_sold)
+
+# Create histogram with ggplot2
+# Create smoothed histogram with ggplot2
+ggplot(df, aes(x = total_items_sold)) +
+  geom_density(fill = "skyblue", alpha = 0.5) +
+  geom_vline(aes(xintercept = 350), color = "red", linetype = "dashed", linewidth = 1) +
+  labs(title = "Distribution of Total Items Sold per Day", x = "Total Items Sold", y = "Density") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
